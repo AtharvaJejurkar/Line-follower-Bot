@@ -1,0 +1,96 @@
+// Pin definitions for IR sensors
+const int irSensors[] = {36, 39, 34, 35, 32};  // Adjust these pins according to your connections
+const int numSensors = 5;
+
+// Pin definitions for L298N motor driver
+const int enA = 25;  // Enable pin for motor A
+const int in1 = 26;  // Input 1 for motor A
+const int in2 = 27;  // Input 2 for motor A
+const int enB = 14;  // Enable pin for motor B
+const int in3 = 12;  // Input 1 for motor B
+const int in4 = 13;  // Input 2 for motor B
+
+// Motor speed constants
+const int baseSpeed = 150;  // Base speed for both motors (0-255)
+const int turnSpeed = 50;   // Additional speed for turning (0-255)
+
+void setup() {
+  // Initialize serial communication for debugging
+  Serial.begin(115200);
+
+  // Set up IR sensor pins as inputs
+  for (int i = 0; i < numSensors; i++) {
+    pinMode(irSensors[i], INPUT);
+  }
+
+  // Set up motor driver pins as outputs
+  pinMode(enA, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+  pinMode(enB, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
+
+  // Initially stop both motors
+  stopMotors();
+}
+
+void loop() {
+  // Read sensor values
+  int sensorValues[numSensors];
+  for (int i = 0; i < numSensors; i++) {
+    sensorValues[i] = digitalRead(irSensors[i]);
+    Serial.print(sensorValues[i]);
+    Serial.print(" ");
+  }
+  Serial.println();
+
+  // Simple line following logic
+  if (sensorValues[2] == 1) {  // Center sensor detects the line
+    moveForward();
+  } else if (sensorValues[1] == 1 || sensorValues[0] == 1) {  // Line is on the left
+    turnLeft();
+  } else if (sensorValues[3] == 1 || sensorValues[4] == 1) {  // Line is on the right
+    turnRight();
+  } else {
+    // No line detected, stop or implement a search pattern
+    stopMotors();
+  }
+
+  // Small delay to prevent overwhelming the ESP32
+  delay(10);
+}
+
+void moveForward() {
+  analogWrite(enA, baseSpeed);
+  analogWrite(enB, baseSpeed);
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+}
+
+void turnLeft() {
+  analogWrite(enA, baseSpeed - turnSpeed);
+  analogWrite(enB, baseSpeed + turnSpeed);
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+}
+
+void turnRight() {
+  analogWrite(enA, baseSpeed + turnSpeed);
+  analogWrite(enB, baseSpeed - turnSpeed);
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+}
+
+void stopMotors() {
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
+}
