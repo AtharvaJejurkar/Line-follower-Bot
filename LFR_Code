@@ -1,14 +1,14 @@
 // Pin definitions for IR sensors
-const int irSensors[] = {36, 39, 34, 35, 32};  // Adjust these pins according to your connections
+const int irSensors[] = {33, 32, 35, 34, 23};  // Adjust these pins according to your connections
 const int numSensors = 5;
 
 // Pin definitions for L298N motor driver
-const int enA = 25;  // Enable pin for motor A
-const int in1 = 26;  // Input 1 for motor A
+const int enA = 13;  // Enable pin for motor A
+const int in1 = 14;  // Input 1 for motor A
 const int in2 = 27;  // Input 2 for motor A
-const int enB = 14;  // Enable pin for motor B
-const int in3 = 12;  // Input 1 for motor B
-const int in4 = 13;  // Input 2 for motor B
+const int enB = 12;  // Enable pin for motor B
+const int in3 = 26;  // Input 1 for motor B
+const int in4 = 25;  // Input 2 for motor B
 
 // Motor speed constants
 const int baseSpeed = 150;  // Base speed for both motors (0-255)
